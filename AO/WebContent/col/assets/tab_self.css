@@ -1,0 +1,81 @@
+.modefy{
+	line-height: 36px;
+	display: none;
+}
+
+.ipt{
+	height: 30px;
+	width: 40px;
+	border: #149BDF 1px solid;
+	border-radius: 3px;
+	display: block;
+}
+
+.addTab{
+	width: 200px;
+	margin: 0 auto;
+	height: 35px;
+	text-align: center;
+}
+
+#addbut{
+	margin: 0 auto;
+	margin-top: 5px;
+	width: 90px;
+	height: 30px;
+	border: solid 1px #d3dbde;
+	border-radius: 3px;
+	line-height: 33px;
+	font-size: 9pt;
+	float: left;
+}
+#addbut:hover{
+	background-color:#4BB1CF;
+	cursor: pointer;
+}
+
+#qrtj{
+	background-color: white;
+	margin: 0 auto;
+	margin-top: 5px;
+	width: 90px;
+	height: 30px;
+	border: solid 1px #d3dbde;
+	border-radius: 3px;
+	line-height: 33px;
+	font-size: 9pt;
+	float: right;
+	width: 92px;
+	height: 32px;"
+}
+#qrtj:hover{
+	background-color:#4BB1CF;
+	cursor: pointer;
+}
+
+.file {
+    position: relative;
+    display: inline-block;
+    background: #D0EEFF;
+    border: 1px solid #99D3F5;
+    border-radius: 4px;
+    padding: 4px 12px;
+    overflow: hidden;
+    color: #1E88C7;
+    text-decoration: none;
+    text-indent: 0;
+    line-height: 20px;
+}
+.file input {
+    position: absolute;
+    font-size: 100px;
+    right: 0;
+    top: 0;
+    opacity: 0;
+}
+.file:hover {
+    background: #AADFFD;
+    border-color: #78C3F3;
+    color: #004974;
+    text-decoration: none;
+}

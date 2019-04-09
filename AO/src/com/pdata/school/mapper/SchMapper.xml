@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdata.school.mapper.SchMapper" >
+	 <!-- 学校账号登陆schLogin -->
+	 <select id="schLogin" parameterType="sch" resultType="sch">
+	 	select * from t_sch where saccount=#{sAccount} and spswd=#{sPswd}
+	 </select> 
+
+	<!-- 通过id查询用户 -->
+	 <select id="findUserBySid" parameterType="String" resultType="sch">
+	 	select * from t_sch where sid=#{sId}
+	 </select>
+	 
+	<!-- 修改个人信息 -->
+	<update id="modifyInfo" parameterType="Sch">
+		UPDATE t_sch SET sUname=#{sUname},sDepartment=#{sDepartment},sPhone=#{sPhone},sEmail=#{sEmail} WHERE sid=#{sId} 	
+	</update>
+	
+	<!-- 修改密码 -->
+	<update id="modifypswd" parameterType="Sch">
+	UPDATE t_sch SET spswd=#{sPswd} WHERE sid=#{sId}
+	</update>
+	
+	<!--异步验证添加的账号是否存在 -->
+	<select id="verifyAddAccount" parameterType="string" resultType="boolean">
+	<![CDATA[ select count(*) from t_col where caccount=#{account} ]]> 
+	</select>
+	
+	<!-- 添加学院账号 -->
+	<insert id="addCol" parameterType="Col">
+	 insert into t_col(cid,caccount,cpswd,ccid,cRole,cName,cDepartment,cUname,cPhone,cEmail)
+	  VALUES(#{cId},#{cAccount},#{cPswd},#{cCid},#{cRole},#{cName},#{cDepartment},#{cUname},#{cPhone},#{cEmail})
+	</insert>
+	
+	<!--  查询二级学院用户总数 -->
+	<select id="findCountColUser" resultType="int" parameterType="string">
+		select COUNT(*) from t_col where ccid=#{condition}
+	</select>
+
+	<!-- 指定开始索引及查询多少记录查询用户 -->
+	<select id="findUser" resultType="Col" parameterType="PageBean">
+		select * from t_col where ccid=#{condition} limit #{startIndex},#{pageSize}
+	</select>
+
+	<!-- 删除用户 -->
+	<delete id="deletdUserById" parameterType="string">
+	 delete from t_col where cid=#{cId}
+	</delete>
+	<!-- 为用户重置密码 -->
+	<update id="resetPswdForUser" parameterType="col">
+	 update t_col set cPswd=#{cPswd} where cid=#{cId}
+	</update>
+	 
+	<!-- 查找用户自己的项目列表 -->
+	<select id="queryProOfBeCompleted" resultType="DispensePro"  parameterType="PageBean">
+	 select * from t_dispensePro where sid=#{condition} and dpstate=2 order by pdate desc limit #{startIndex},#{pageSize}
+	</select>
+	 
+	 <!--  查询自己的项目的总数 -->
+	<select id="findCountBeCompleted" parameterType="String" resultType="int">
+		select COUNT(*) from t_dispensePro where sid=#{sId} and dpstate=2
+	</select>
+	
+	<!-- 通过pid查询项目 -->
+	<select id="queryProByPid" parameterType="string" resultType="Pro">
+		select * from t_pro where pid=#{pid}
+	</select>
+	
+	<!-- 查询所有的学院用户 -->
+	<select id="findAllColList" parameterType="string" resultType="Col">
+	select * from t_col where ccid=#{cCid}
+	</select>
+	
+	<!-- 通过did查询教育厅分配的任务 -->
+	<select id="findDisPenseProByDid" parameterType="string" resultType="DispensePro">
+		select * from t_dispensePro where did=#{did}  order by pdate desc
+	</select>
+	
+	<!-- public void (String dId);//修改自己接收的任务的进度状态 -->
+	<update id="updateCState" parameterType="string">
+		update t_dispensePro set cstate=2 where did=#{dId}
+	</update>
+	
+	<!-- 学校把接收的任务加入到任务表 ( task) -->
+	<insert id="insertProToTaskOfSch" parameterType="TaskOfSch">
+	 insert into t_taskOfSch(tid,fid,pid,pname,cid,cname,tdepartment,tpstate,tstate,eename,purl,pdate)
+	  VALUES(#{tId},#{fId},#{pId},#{pName},#{cId},#{cName},#{tDepartment},#{tPState},#{tState},#{eEname},#{pUrl},#{pDate})
+	</insert>
+	
+	<!-- 学校查询与本项目相关的人的总数 -->
+	<select id="queryCountColOfPro" resultType="int" parameterType="Tools">
+		select COUNT(*) from t_taskOfSch where pid=#{attr1} and fid=#{attr2}
+	</select>
+	
+	<!-- 学校查看与项目相对应的用户 -->
+	<select id="queryColOfPro" parameterType="PageBean" resultType="TaskOfSch">
+		select * from t_taskOfSch where pid=#{condition} and fid=#{id} limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!-- 为对应的学院分配任务 -->
+	<update id="assignTaskToCol" parameterType="String">
+		update t_taskOfSch set tpstate=2 where tid=#{tId}
+	</update>
+	
+	
+	<!-- 学校查询与本项目相关的人的总数 -->
+	<select id="queryCountColOfProState" resultType="int" parameterType="Tools">
+		select COUNT(*) from t_taskOfSch where pid=#{attr1} and fid=#{attr2} and tpstate=2
+	</select>
+	<!-- public List<TaskOfSch> queryTaskListState();//查看任务完成状态 -->
+	<select id="queryTaskListState" parameterType="PageBean" resultType="TaskOfSch" >
+		select * from t_taskOfSch where pid=#{condition} and fid=#{id} and tpstate=2 limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!-- 通过项目ID，查询项目的别名 -->
+	<select id="getAlias" parameterType="String" resultType="String">
+		select palias from t_pro where pid=#{pId}
+	</select>
+	
+	<!-- 通过项目id查询项目的属性 -->
+	 <select id="findProAttrByPid" parameterType="String" resultType="AttrOfPro">
+	 select * from t_arg where apid=#{aPid}
+	 </select>
+	
+	<!-- 根据项目id获取项目属性的个数 -->
+	<select id="getLenAttrOfProByPid" parameterType="String" resultType="int">
+	 select count(*) from t_arg where apid=#{pId}
+	 </select>
+	 
+	 <!-- 获得当前用户的数据的总个数 -->
+	 <select id="getCountOfColDate" parameterType="ToolForGetCount" resultType="int">
+	 	select count(*) from ${table} where schid=#{sId} and colid=#{cId}
+	 </select>
+	 
+	 <!--  getAllDataCount(ToolForGetCount tool);//得到账户下所有的数据 -->
+	 <!-- 获得当前用户的数据的总个数 -->
+	 <select id="getAllDataCount" parameterType="ToolForGetCount" resultType="int">
+	 	select count(*) from ${table} where schid=#{cId} and state!=1
+	 </select>
+	 
+	 <!-- public void affirm(ToolForGetCount tool);/ -->
+	 <update id="affirm" parameterType="String">
+	 	update t_taskOfSch set tstate=4 where tid=#{tId}
+	 </update>
+	 
+	 <!-- public void (ToolForGetCount tool);//修改状态，加入驳回理由 -->
+	 <update id="reject" parameterType="ToolForGetCount">
+	 	update t_taskOfSch set tstate=5,backmsg=#{table} where tid=#{cId}
+	 </update>
+	 
+	 <!-- modifyStateOfDtae(ToolForGetCount tool) -->
+	 <update id="modifyStateOfDtae" parameterType="ToolForGetCount">
+	 	UPDATE ${table} SET state=1 WHERE colid= #{cId}
+	 </update>
+	 
+	 <!-- public int getStateNumOfNotConfirm(DispensePro dispensePro); -->
+	 <select id="getStateNumOfNotConfirm" parameterType="DispensePro" resultType="int">
+	 	select count(*) from t_taskOfSch where pid=#{pid} and fid=#{sId} and tpstate=2 and tstate!=4 
+	 </select>
+	 
+	 <!-- public void modifyStateOftask(String id); -->
+	 <update id="modifyStateOftask" parameterType="String">
+	 	update t_dispensePro set cstate=3 where did=#{id}
+	 </update>
+	 
+	 <!-- public void modifydataStateTo3(ToolForGetCount tool) -->
+	 <update id="modifydataStateTo3" parameterType="ToolForGetCount">
+	 	UPDATE ${table} SET state=3 WHERE schid= #{cId}
+	 </update>
+</mapper>

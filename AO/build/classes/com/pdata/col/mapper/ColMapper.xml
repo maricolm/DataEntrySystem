@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdata.col.mapper.ColMapper" >
+	 <!-- 管理员登陆 -->
+	 <select id="loginCol" parameterType="col" resultType="col">
+	 	select * from t_col where caccount=#{cAccount} and cpswd=#{cPswd}
+	 </select>
+
+	<!-- 修改个人信息 -->
+	<update id="modifyInfo" parameterType="Col">
+		UPDATE t_col SET cUname=#{cUname},cDepartment=#{cDepartment},cPhone=#{cPhone},cEmail=#{cEmail} WHERE cid=#{cId}
+	</update>
+	 
+	 <!-- 通过id查询用户 -->
+	 <select id="findColByCid" parameterType="String" resultType="col">
+	 	select * from t_col where cid=#{cId}
+	 </select>
+	 
+	<!-- 修改密码 -->
+	<update id="modifypswd" parameterType="col">
+		UPDATE t_col SET cpswd=#{cPswd} WHERE cid=#{cId}
+	</update>
+	
+	 <!--  查询自己的项目的总数 -->
+	<select id="findSelfProCount" parameterType="String" resultType="int">
+		select COUNT(*) from t_taskOfSch where cid=#{cId} and tpstate=2
+	</select>
+	
+	<!-- 项目列表 public List<> proList(PageBean<TaskOfSch> pb); -->
+	<select id="proList" parameterType="PageBean" resultType="TaskOfSch">
+		select * from t_taskOfSch where cid=#{condition} and tpstate=2 order by pdate desc limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!-- public String (String tId);//接收项目 -->
+	<update id="acceptTask" parameterType="String">
+		UPDATE t_taskOfSch SET tstate=2 WHERE tid=#{tId}
+	</update>
+	
+	<!-- 通过项目id查询项目的属性 -->
+	 <select id="findProAttrByPid" parameterType="String" resultType="AttrOfPro">
+	 select * from t_arg where apid=#{aPid}
+	 </select>
+	
+	<!-- 通过项目ID，查询项目的别名 -->
+	<select id="getAlias" parameterType="String" resultType="String">
+		select palias from t_pro where pid=#{pId}
+	</select>
+	
+	<!-- 根据项目id获取项目属性的个数 -->
+	<select id="getLenAttrOfProByPid" parameterType="String" resultType="int">
+	 select count(*) from t_arg where apid=#{pId}
+	 </select>
+	 
+	 <!-- 获取数据的总体数 -->
+	 <select id="getCountDate" parameterType="ToolForGetCount" resultType="int">
+	 	select COUNT(*) from ${table} where colId=#{cId}
+	 </select>
+	 
+	<!-- 根据项目ID获取信息-->
+	<select id="getProByPid" parameterType="String" resultType="Pro">
+	 	select * from t_pro where pid=#{pid}
+	 </select>
+	 
+	<!-- deleteDataById(ToolForGetCount tool) -->
+	<delete id="deleteDataById" parameterType="ToolForGetCount" >
+		DELETE FROM ${table} WHERE id =#{cId}
+	</delete>
+	
+	<!-- public void (ToolForGetCount tool);//撤销数据 -->
+	 <delete id="callBackData" parameterType="ToolForGetCount" >
+		DELETE FROM ${table} WHERE colid =#{cId}
+	</delete>
+	
+	<!-- 
+		public void updateDataState(ToolForGetCount tool);//改变数据表中的状态
+		public void updateProState(ToolForGetCount tool);//改变当前项目的状态
+	 -->
+	 <!-- 改变数据的状态 -->
+	 <update id="updateDataState" parameterType="ToolForGetCount" >
+	 	UPDATE ${table} SET state=2 WHERE colid= #{cId}
+	 </update>
+	 <!-- 改变项目的状态 -->
+	 <update id="updateProState" parameterType="String" >
+	 	UPDATE t_taskOfSch SET tState=3 WHERE tId= #{tId}
+	 </update>
+</mapper>

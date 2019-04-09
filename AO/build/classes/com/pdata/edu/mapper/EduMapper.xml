@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdata.edu.mapper.EduMapper" >
+	 <!-- 教育厅账号登陆 -->
+	 <select id="loginEdu" parameterType="edu" resultType="edu">
+	 	select * from t_edu where eaccount=#{eAccount} and epswd=#{ePswd}
+	 </select> 
+	 <!-- 通过id查询用户 -->
+	 <select id="findUserByEid" parameterType="edu" resultType="edu">
+	 	select * from t_edu where eid=#{eId}
+	 </select>
+	 
+	<!-- 修改个人信息 -->
+	<update id="modifyInfo" parameterType="Edu">
+		UPDATE t_edu SET eName=#{eName},eDepartment=#{eDepartment},ePhone=#{ePhone},eEmail=#{eEmail} WHERE eid=#{eId} 	
+	</update>
+	
+	<!-- 修改密码 -->
+	<update id="modifypswd" parameterType="Edu">
+	UPDATE t_edu SET epswd=#{ePswd} WHERE eid=#{eId}
+	</update>
+	 
+	 <!-- 添加学校账号 -->
+	 <insert id="addSch" parameterType="Sch">
+	 	insert into t_sch(sid,saccount,spswd,scid,srole,sname,sdepartment,suname,sphone,semail)
+	 	VALUES(#{sId},#{sAccount},#{sPswd},#{sCid},#{sRole},#{sName},#{sDepartment},#{sUname},#{sPhone},#{sEmail})
+	 </insert>
+	 
+	 <!--异步验证添加的账号是否存在 -->
+	<select id="verifyAddAccount" parameterType="string" resultType="boolean">
+	<![CDATA[ select count(*) from t_sch where saccount=#{account} ]]> 
+	</select>
+	
+	<!--  查询学校用户总数 -->
+	<select id="findSchCount" resultType="int">
+		select COUNT(*) from t_sch 
+	</select>
+
+	<!-- 指定开始索引及查询多少记录查询用户 -->
+	<select id="findUsers" resultType="Sch" parameterType="PageBean">
+		select * from t_sch limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!-- 重置用户密码 -->
+	<update id="resetPswdSch" parameterType="Sch">
+		UPDATE t_sch SET spswd=#{sPswd} WHERE sid=#{sId}
+	</update>
+	<!-- 删除用户 -->
+	<delete id="deleteSchBySid" parameterType="string">
+		DELETE FROM t_sch where sid=#{sId}
+	</delete>
+	 
+	 <!-- 添加项目 -->
+	 <insert id="addPro" parameterType="Pro">
+	 insert into t_pro(pid,pname,palias,peid,pename,pstate,pdate)
+	 	VALUES(#{pId},#{pName},#{pAlias},#{pEid},#{pEname},#{pState},#{pDate})
+	 </insert>
+	 
+	<!--异步验证项目别名是否存在 -->
+	<select id="ajaxVerifyProAlias" parameterType="string" resultType="boolean">
+	<![CDATA[ select count(*) from t_pro where palias=#{alias} ]]> 
+	</select>
+	
+	<!-- 异步验证添加的账号是否存在 -->
+	<select id="verifyArgsaAlias" parameterType="AttrOfPro" resultType="boolean">
+	<![CDATA[ select count(*) from t_arg where aPname=#{aPname} and aalias=#{aAlias} ]]> 
+	</select>
+	 
+	 <!-- 通过id查询用户 -->
+	 <select id="findProById" parameterType="String" resultType="Pro">
+	 	select * from t_pro where pid=#{pId}
+	 </select>
+	 
+	 <!-- 通过项目id查询项目的属性 -->
+	 <select id="findProAttrByPid" parameterType="String" resultType="AttrOfPro">
+	 select * from t_arg where apid=#{aPid}
+	 </select>
+	 
+	 <!-- 添加项目属性 -->
+	 <insert id="addProAttr" parameterType="AttrOfPro">
+	 insert into t_arg(apid,apname,aname,aalias)
+	 	VALUES(#{aPid},#{aPname},#{aName},#{aAlias})
+	 </insert>
+	 
+	<!--  查询项目总数 -->
+	<select id="findProCount" resultType="int">
+		select COUNT(*) from t_pro where peid=#{condition}
+	</select>
+	<!--  查询待处理的项目总数 -->
+	<select id="queryProStateDcl" resultType="int">
+		select COUNT(*) from t_pro where peid=#{condition} and pstate=2
+	</select>
+	
+	<!-- 指定开始索引及查询项目 -->
+	<select id="findPro" resultType="Pro" parameterType="PageBean">
+		select * from t_pro where peid=#{condition} order by pdate desc limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!-- 通过项目ID删除项目 -->
+	<delete id="deleteProByPid" parameterType="string">
+	 delete from t_pro where pid=#{pId}
+	</delete>
+	
+	<!-- 通过项目ID删除项目 -->
+	<delete id="deleteAttrByaPid" parameterType="string">
+	 delete from t_arg where apid=#{pId}
+	</delete>
+	
+	<!-- 通过项目ID删除项目 -->
+	<delete id="deleteAttrByaId" parameterType="string">
+	 delete from t_arg where aid=#{aId}
+	</delete>
+	
+	<!-- 通过项目ID获取项目别名 -->
+	<select id="getProPaliasByPid" parameterType="string" resultType="string">
+	select palias from t_pro where pid=#{pId}
+	</select>
+	
+	<!-- 通过项目ID，获取项目的属性别名 -->
+	<select id="getAttrByProPid" parameterType="string" resultType="string">
+	select aalias from t_arg where apid=#{aPid}
+	</select>
+	
+	<!-- 通过项目id 获取项目的属性的名字 getAttrNameByProPid-->
+	<select id="getAttrNameByProPid" parameterType="string" resultType="string">
+	select aname from t_arg where apid=#{aPid}
+	</select>
+	
+	<!-- 更改模版中的Excel名 -->
+	<update id="updataProUrl" parameterType="Pro">
+	UPDATE t_pro SET purl=#{pUrl} WHERE pid=#{pId}
+	</update>
+	
+	<!-- 更改项目状态 -->
+	<update id="updataState" parameterType="String">
+	UPDATE t_pro SET pstate=2 WHERE pid=#{pId}
+	</update>
+	
+	<!-- 查找所有的学校用户 -->
+	<select id="findAllEdu" resultType="Sch">
+		select * from t_sch
+	</select>
+	
+	<!-- 关联学校用户给项目 -->
+	<insert id="insertSchForPro" parameterType="DispensePro">
+		insert into t_dispensepro(did,fid,pid,pname,sid,sname,cname,sdepartment,dpstate,cstate,eename,purl,pdate)
+	 	VALUES(#{dId},#{fId},#{pid},#{pName},#{sId},#{sName},#{cName},#{sDepartment},#{dpState},#{cState},#{eEname},#{pUrl},#{pDate})
+	</insert>
+	
+	<!-- 发布项目后给学校分发任务 -->
+	<update id="updateDProAPState" parameterType="string">
+		UPDATE t_dispensepro SET dpstate=2 where did=#{dId}
+	</update>
+	
+	<!-- 查看与项目相对应的用户的总个数 -->
+	<select id="queryCountUserOfPro" resultType="int" parameterType="Tools">
+	select COUNT(*) from t_dispensepro where pid=#{attr2} and fid=#{attr1}
+	</select>
+	
+	<!-- 查看与项目相对应的用户 -->
+	<select id="querySchOfPro" parameterType="PageBean" resultType="DispensePro">
+	select * from t_dispensepro where pid=#{condition} and fid=#{id} limit #{startIndex},#{pageSize}
+	</select>
+	
+	<!-- 根据项目id获取项目属性的个数 -->
+	<select id="getLenAttrOfProByPid" parameterType="String" resultType="int">
+	 select count(*) from t_arg where apid=#{pId}
+	</select>
+	
+	<!-- public int getCountOfColDate(String tableName);//获得总个数 -->
+	<select id="getCountOfColDate" resultType="int" parameterType="ToolForGetCount">
+		select COUNT(*) from ${table} where state=3
+	</select>
+	
+	<!-- 通过项目ID，查询项目的别名 -->
+	<select id="getAlias" parameterType="String" resultType="String">
+		select palias from t_pro where pid=#{pId}
+	</select>
+	
+	<!-- public List<DispensePro> getDispensePro(String pid); -->
+	<select  id="getDispensePro" parameterType="String" resultType="DispensePro">
+		select * from t_dispensepro where pid=#{pid} and dpstate=2
+	</select>
+	
+	<!-- public void modifyStateOftask(String did); -->
+	<update id="modifyStateOftask" parameterType="string">
+		UPDATE t_dispensepro SET cstate=4 where did=#{did}
+	</update>
+	
+	<!-- public int getCountOfSigleSchoolDate(ToolForGetCount tool); -->
+	<select id="getCountOfSigleSchoolDate" resultType="int" parameterType="ToolForGetCount">
+		select COUNT(*) from ${table} where schid=#{cId}
+	</select> 
+	
+	<!-- public void modifyProTaskState(ToolForGetCount tool);//修改任务状态 -->
+	<update id="modifyProTaskState" parameterType="ToolForGetCount">
+	 	update t_dispensepro set cstate=5,backmsg=#{table} where did=#{cId}
+	 </update>
+	<!-- public void modifyDataStateTo2(ToolForGetCount tool); --> 
+	 <update id="modifyDataStateTo2" parameterType="ToolForGetCount">
+	 	update ${table} set state=2 where schid=#{cId}
+	 </update>
+	<!-- public void endPro(String pId); -->
+	 <update id="endPro" parameterType="string">
+	 	update t_pro set pstate=3 where pid=#{pId}
+	 </update>
+</mapper>

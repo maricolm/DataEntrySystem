@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.pdata.admin.mapper.AdminMapper" >
+	 <!-- 管理员登陆 -->
+	 <select id="loginAdmin" parameterType="admin" resultType="admin">
+	 	select * from t_adm where aaccount=#{aAccount} and apswd=#{aPswd}
+	 </select> 
+	 
+	 <!-- 添加教育厅账号 -->
+	 <insert id="addEdu" parameterType="Edu">
+	 	insert into t_edu(eid,eaccount,epswd,erole,ename,edepartment,ephone,eemail)
+	 	VALUES(#{eId},#{eAccount},#{ePswd},#{eRole},#{eName},#{eDepartment},#{ePhone},#{eEmail})
+	 </insert>
+	
+	 <!-- 查看教育厅账号用户列表 -->
+	 <select id="findEdu" resultType="Edu">
+	 	select * from t_edu
+	 </select>
+
+	<!-- 重置秘密 -->
+	<update id="resetPswdById" parameterType="Edu">
+		UPDATE t_edu SET epswd=#{ePswd} WHERE eid=#{eId} 	
+	</update>
+	
+	<!-- 删除用户 -->
+	<delete id="deleteEduById" parameterType="string">
+		DELETE FROM t_edu where eid=#{eId}
+	</delete>
+	
+	
+	<!--异步验证添加的账号是否存在 -->
+	<select id="verifyAddAccount" parameterType="string" resultType="boolean">
+	<![CDATA[ select count(*) from t_edu where eaccount=#{account} ]]> 
+	</select>
+	 
+</mapper>
